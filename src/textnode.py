@@ -1,12 +1,12 @@
 from enum import Enum
 
 class TextType(Enum):
-	text_plain = "text(plain)"
-	bold_text = "**Bold text**"
-	italic_text = "_Italic text_"
-	code_text = "`Code text`"
-	links = "[anchor text](url)"
-	images = "![alt text](url)"
+    TEXT = "text"
+    BOLD = "bold"
+    ITALIC = "italic"
+    CODE = "code"
+    LINK = "link"
+    IMAGE = "image"
 
 class TextNode:
 	def __init__(self,text,text_type,url=None):

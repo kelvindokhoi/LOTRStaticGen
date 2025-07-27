@@ -1,4 +1,4 @@
-from htmlnode import HTMLNode,ParentNode,LeafNode
+from htmlnode import ParentNode
 from textnode import TextNode,TextType
 from markdown_to_blocks import markdown_to_blocks
 from block_to_blocktype import block_to_blocktype
@@ -17,7 +17,8 @@ def markdown_to_html_node(markdown):
             case BlockType.PARAGRAPH:
                 html_node = ParentNode('p',None,None)
             case BlockType.HEADING:
-                html_node = ParentNode(heading_block_to_html_tag(markdown_block),None,{})
+                header_tag = heading_block_to_html_tag(markdown_block)
+                html_node = ParentNode(header_tag,text_to_children(markdown_block,header_tag),{})
             case BlockType.CODE:
                 html_node = ParentNode('pre',None,None)
             case BlockType.QUOTE:
@@ -32,14 +33,15 @@ def markdown_to_html_node(markdown):
             case 'blockquote':
                 processed_markdown_block = '\n'.join(markdown_line[2:]for markdown_line in markdown_block.split('\n'))
                 html_node.children = text_to_children(processed_markdown_block)
-            case 'ul','ol':
+            case 'ul'|'ol':
                 processed_markdown_block = [markdown_line[re.match(r'^(\-|\*|\d+\.) ',markdown_line).end():] for markdown_line in markdown_block.split('\n')] # type: ignore
-                html_node.children = [ParentNode('li',None,text_to_children(processed_markdown_line)) for processed_markdown_line in processed_markdown_block]
+                html_node.children = [ParentNode('li',text_to_children(processed_markdown_line),None) for processed_markdown_line in processed_markdown_block]
             case 'p':
                 processed_markdown_block = '\n'.join(' '.join(markdown_line.lstrip(' ').rstrip(' ') for markdown_line in filter(lambda markdown_line:markdown_line.strip()!='',markdown_paragraph.split('\n'))) for markdown_paragraph in markdown_block.split('\n\n'))
                 html_node.children = text_to_children(processed_markdown_block)
             case _:
-                html_node.children = text_to_children(markdown_block)
+                if html_node.children is None:
+                    html_node.children = text_to_children(markdown_block)
             
         if div_html_node.children is None:
             div_html_node.children = [html_node]
@@ -53,8 +55,10 @@ def heading_block_to_html_tag(markdown):
         raise Exception('No # indicator detected!')
     return 'h'+str(len(power.group(1)))
 
-def text_to_children(markdown):
-    lines = markdown.split(sep='\n')
+def text_to_children(markdown,header_tag=None):
+    if header_tag is not None:
+        markdown = markdown[int(header_tag[1:]):].lstrip()
+    lines = markdown.split('\n')
     children = []
     for line in lines:
         line_html_nodes = [text_node_to_html_node(node) for node in text_to_textnodes(line)]

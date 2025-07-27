@@ -1,12 +1,13 @@
 import os
 import shutil
+from MACHINE_CONFIG import *
 
 class StaticOperations:
     def __init__(self,ignore_list = []):
         self.delete_log = []
         self.copy_log = []
         self.static_path = os.path.join(os.path.abspath('./'),'static')
-        self.public_path = os.path.join(os.path.abspath('./'),'public')
+        self.public_path = os.path.join(os.path.abspath('./'),'public') if RUNNING_LOCALLY else os.path.join(os.path.abspath('./'),'docs')
         self.ignore_list = ignore_list
 
     def delete_public_contents(self):

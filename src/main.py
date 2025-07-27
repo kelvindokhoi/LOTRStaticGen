@@ -1,10 +1,12 @@
 from textnode import *
 from htmlnode import *
+from static_operations import StaticOperations
+
 
 
 
 def main():
-	my_text_node = TextNode("boom boom",TextType.TEXT,)
-	print(my_text_node)
-
+	copier = StaticOperations()
+	delete_public_and_copy_static_to_public_log = copier.delete_public_and_copy_static_to_public()
+	print(delete_public_and_copy_static_to_public_log)
 main()

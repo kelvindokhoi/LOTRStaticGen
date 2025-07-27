@@ -1,9 +1,8 @@
 import os
 import shutil
-from MACHINE_CONFIG import *
 
 class StaticOperations:
-    def __init__(self,ignore_list = []):
+    def __init__(self,RUNNING_LOCALLY=True,ignore_list = []):
         self.delete_log = []
         self.copy_log = []
         self.static_path = os.path.join(os.path.abspath('./'),'static')
